@@ -1,7 +1,8 @@
-import aiosqlite
 from typing import List, Optional, Tuple
 
-from src.env_tools import DATABASE_PATH
+import aiosqlite
+
+from src.env_tools import DATABASE_PATH, ADMIN_USER_IDS
 
 _SQL_CREATE_USERS: str = """
 CREATE TABLE IF NOT EXISTS users (
@@ -57,10 +58,15 @@ CREATE TABLE IF NOT EXISTS logs (
 )
 """
 
+_SQL_SEED_ADMIN: str = """
+INSERT INTO users (telegram_id, username, role)
+VALUES (?, '', 'admin')
+ON CONFLICT(telegram_id) DO UPDATE SET role = 'admin'
+"""
 _SQL_UPSERT_USER: str = """
 INSERT INTO users (telegram_id, username, role)
 VALUES (?, ?, 'user')
-ON CONFLICT(telegram_id) DO UPDATE SET username=excluded.username
+ON CONFLICT(telegram_id) DO UPDATE SET username = excluded.username
 """
 _SQL_GET_USER: str = "SELECT id, telegram_id, username, role FROM users WHERE telegram_id = ?"
 _SQL_GET_ADMINS: str = "SELECT telegram_id FROM users WHERE role = 'admin'"
@@ -80,7 +86,7 @@ _SQL_GET_MEDIA: str = "SELECT type, file_id FROM ticket_media WHERE ticket_id = 
 _SQL_INSERT_CHAT: str = """
 INSERT INTO support_chats (chat_id, title, is_active)
 VALUES (?, ?, 0)
-ON CONFLICT(chat_id) DO UPDATE SET title=excluded.title
+ON CONFLICT(chat_id) DO UPDATE SET title = excluded.title
 """
 _SQL_GET_ACTIVE_CHATS: str = "SELECT chat_id, title, is_active FROM support_chats WHERE is_active = 1"
 _SQL_GET_ALL_CHATS: str = "SELECT chat_id, title, is_active FROM support_chats"
@@ -100,6 +106,8 @@ async def init_db() -> None:
         await db.execute(_SQL_CREATE_SUPPORT_CHATS)
         await db.execute(_SQL_CREATE_PUBLICATIONS)
         await db.execute(_SQL_CREATE_LOGS)
+        for admin_id in ADMIN_USER_IDS:
+            await db.execute(_SQL_SEED_ADMIN, (admin_id,))
         await db.commit()
 
 

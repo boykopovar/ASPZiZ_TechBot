@@ -5,7 +5,6 @@ from aiogram.filters import Command
 
 from src.constants import (
     MSG_ACCESS_DENIED_ADMIN,
-    MSG_ACCESS_DENIED_STAFF,
     MSG_NO_TICKETS,
     MSG_REPUBLISH_COUNT,
     MSG_REPUBLISH_TICKET_COUNT,
@@ -15,7 +14,7 @@ from src.constants import (
 from src.services import ticket_service, chat_service, user_service
 from src.utils.formatting import ticket_all_line, build_paginated_messages
 from src.utils.keyboards import accept_kb
-from src.handlers.messages.ticket_messages import _build_media_group
+from src.utils.media import build_media_group
 
 _router = Router()
 
@@ -27,7 +26,7 @@ async def _send_ticket_to_chat(
 ) -> None:
     ticket_id = ticket[0]
     media = await ticket_service.get_ticket_media(ticket_id)
-    group = _build_media_group(media, ticket[3])
+    group = build_media_group(media, ticket[3])
     if group:
         msgs = await bot.send_media_group(chat_id=chat_id, media=group)
         await ticket_service.register_publication(ticket_id, chat_id, msgs[0].message_id)

@@ -1,10 +1,7 @@
 from typing import List, Optional, Tuple
 
-from src.constants import CB_PREFIX_ACCEPT, CB_PREFIX_DONE
+from src.constants import LOG_ACTION_ACCEPT, LOG_ACTION_DONE
 from src.repositories import db_repository
-
-_LOG_ACCEPT: str = CB_PREFIX_ACCEPT
-_LOG_DONE: str = CB_PREFIX_DONE
 
 
 async def create_ticket(
@@ -25,12 +22,12 @@ async def get_ticket_media(ticket_id: int) -> List[Tuple[str, str]]:
 
 async def accept_ticket(ticket_id: int, staff_id: int) -> None:
     await db_repository.set_ticket_accepted(ticket_id)
-    await db_repository.log(_LOG_ACCEPT, staff_id, f"Принял заявку #{ticket_id}")
+    await db_repository.log(LOG_ACTION_ACCEPT, staff_id, f"Принял заявку #{ticket_id}")
 
 
 async def finish_ticket(ticket_id: int, user_id: int) -> None:
     await db_repository.set_ticket_done(ticket_id)
-    await db_repository.log(_LOG_DONE, user_id, f"Завершил заявку #{ticket_id}")
+    await db_repository.log(LOG_ACTION_DONE, user_id, f"Завершил заявку #{ticket_id}")
 
 
 async def is_ticket_published(ticket_id: int, chat_id: int) -> bool:

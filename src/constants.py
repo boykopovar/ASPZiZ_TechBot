@@ -120,3 +120,12 @@ CAPTION_WITH_LINK: str = "{text}\n{user_link}"
 
 CB_PREFIX_ACCEPT: str = "accept"
 CB_PREFIX_DONE: str = "done"
+CB_PREFIX_ACTIVATE_CHAT: str = "activate"
+CB_PREFIX_DEACTIVATE_CHAT: str = "deactivate"
+CB_PREFIX_APPROVE_CHAT: str = "approve_chat"
+CB_PREFIX_DECLINE_CHAT: str = "decline_chat"
+
+LOG_ACTION_ACCEPT: str = "accept_ticket"
+LOG_ACTION_DONE: str = "done_ticket"
+LOG_ACTION_ACTIVATE_CHAT: str = "activate_chat"
+LOG_ACTION_DEACTIVATE_CHAT: str = "deactivate_chat"

@@ -1,5 +1,6 @@
 from typing import List, Tuple
 
+from src.constants import LOG_ACTION_ACTIVATE_CHAT, LOG_ACTION_DEACTIVATE_CHAT
 from src.repositories import db_repository
 
 
@@ -17,9 +18,9 @@ async def add_support_chat(chat_id: int, title: str) -> None:
 
 async def activate_chat(chat_id: int, approved_by: int) -> None:
     await db_repository.set_chat_active(chat_id, True, approved_by)
-    await db_repository.log("activate_chat", approved_by, f"Активация чата {chat_id}")
+    await db_repository.log(LOG_ACTION_ACTIVATE_CHAT, approved_by, f"Активация чата {chat_id}")
 
 
 async def deactivate_chat(chat_id: int, approved_by: int) -> None:
     await db_repository.set_chat_active(chat_id, False, approved_by)
-    await db_repository.log("deactivate_chat", approved_by, f"Деактивация чата {chat_id}")
+    await db_repository.log(LOG_ACTION_DEACTIVATE_CHAT, approved_by, f"Деактивация чата {chat_id}")

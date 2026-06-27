@@ -20,6 +20,7 @@ from src.env_tools import GTM_PLUS
 from src.logger import logger
 from src.services import ticket_service, user_service
 from src.types.callbacks import AcceptTicketCb, DoneTicketCb
+from src.types.enums import TicketStatus
 from src.utils.formatting import user_link
 from src.utils.keyboards import done_kb
 
@@ -38,7 +39,7 @@ async def accept_ticket(callback: CallbackQuery, callback_data: AcceptTicketCb, 
         await callback.answer(MSG_ONLY_STAFF, show_alert=True)
         return
     ticket = await ticket_service.get_ticket(ticket_id)
-    if not ticket or ticket[4] != "new":
+    if not ticket or ticket[4] != TicketStatus.NEW:
         await callback.answer(MSG_TICKET_BUSY, show_alert=True)
         return
     await ticket_service.accept_ticket(ticket_id, user.id)

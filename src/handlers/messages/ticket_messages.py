@@ -1,7 +1,7 @@
 from typing import List, Tuple
 
 from aiogram import Router, Bot, F
-from aiogram.types import Message, InputMediaPhoto, InputMediaVideo
+from aiogram.types import Message
 
 from src.constants import MSG_TICKET_RECEIVED, MSG_NO_TEXT
 from src.logger import logger
@@ -9,6 +9,7 @@ from src.services import ticket_service, chat_service, user_service
 from src.types.enums import MediaType
 from src.utils.formatting import user_link, caption_with_link
 from src.utils.keyboards import accept_kb
+from src.utils.media import build_media_group
 
 _router = Router()
 
@@ -23,18 +24,6 @@ def _extract_media_from_message(message: Message) -> List[Tuple[str, str]]:
     if message.audio:
         return [(MediaType.AUDIO, message.audio.file_id)]
     return []
-
-
-def _build_media_group(
-    media: List[Tuple[str, str]], caption: str
-) -> List[InputMediaPhoto]:
-    group: List[InputMediaPhoto] = []
-    for m_type, file_id in media:
-        if m_type == MediaType.PHOTO:
-            group.append(InputMediaPhoto(media=file_id, caption=caption if not group else None))
-        elif m_type == MediaType.VIDEO:
-            group.append(InputMediaVideo(media=file_id, caption=caption if not group else None))
-    return group
 
 
 async def _publish_to_chats(
@@ -73,7 +62,7 @@ async def _publish_album_to_chats(
     chats = await chat_service.get_active_chats()
     for chat in chats:
         chat_id = chat[0]
-        group = _build_media_group(media, text)
+        group = build_media_group(media, text)
         if group:
             msgs = await bot.send_media_group(chat_id=chat_id, media=group)
             try:
