@@ -28,7 +28,6 @@ async def main() -> None:
     bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=_PARSE_MODE))
     dp = Dispatcher()
     register_all_routers(dp)
-    await bot.delete_webhook(drop_pending_updates=True)
     logger.info(_LOG_STARTED)
     await dp.start_polling(bot, handle_signals=False)
 
