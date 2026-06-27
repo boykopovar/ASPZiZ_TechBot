@@ -3,7 +3,7 @@ import logging
 import os
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
-from config import BOT_TOKEN
+from config import BOT_TOKEN, DATABASE_DIR
 from handlers import router as h_router
 from commands import router as c_router
 from admin import router as a_router
@@ -11,7 +11,7 @@ from fallback import router as f_router
 from db import init_db
 
 # Автоматически создаём директорию data для sqlite, если не существует
-os.makedirs("/app/data", exist_ok=True)
+os.makedirs(DATABASE_DIR, exist_ok=True)
 
 # Настройка логирования (будет видно в docker compose logs)
 logging.basicConfig(

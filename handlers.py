@@ -1,8 +1,10 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from aiogram import Router, Bot, types, F
 from aiogram.types import Message, CallbackQuery, InputMediaPhoto, InputMediaVideo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+
+from config import GTM_PLUS
 from db import (
     add_or_update_user, save_ticket, save_ticket_media,
     get_active_support_chats, register_publication,
@@ -132,8 +134,8 @@ async def accept_ticket(callback: CallbackQuery, bot: Bot):
 
     ticket_text = ticket[3] or "(без текста)"
 
-    offset = datetime.now(timezone.utc).astimezone().utcoffset()
-    accept_time = (callback.message.date + offset).strftime('%H:%M:%S')
+    accept_datetime = callback.message.date + timedelta(hours=GTM_PLUS)
+    accept_time = accept_datetime.strftime("%H:%M:%S")
 
     new_text = (callback.message.html_text or "") + f"\n\nПринял: {user_link(user)} в {accept_time}"
     if (callback.message.html_text or "") != new_text:
